@@ -17,6 +17,7 @@
 <!--        </init-param>-->
 <!--    </filter>-->
 
+    <!--指定servlet SpringMVC-->
     <servlet>
         <servlet-name>springmvc</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
