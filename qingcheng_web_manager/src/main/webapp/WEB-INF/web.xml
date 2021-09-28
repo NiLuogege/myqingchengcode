@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <!-- 解决post乱码 -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -16,4 +16,27 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+
+    <servlet>
+        <servlet-name>springmvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--指定配置文件-->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:applicationContext*.xml</param-value>
+        </init-param>
+
+        <!--
+      当Web应用启动时，装载Servlet的次序
+      当值为正数或零时：Servlet容器先加载数值小的servlet，再依次加载其他数值大的servlet.
+      当值为负或未定义：Servlet容器将在Web客户首次访问这个servlet时加载它
+        -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>springmvc</servlet-name>
+        <!--当后缀是.do的时候 servlet才会进行拦截并处理-->
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
 </web-app>
