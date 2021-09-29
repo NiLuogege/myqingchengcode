@@ -23,8 +23,14 @@ public class BrandController {
         return "hhjhhh";
     }
 
-    @RequestMapping("/allBrand.do")
+    @RequestMapping("/allBrand")
     public String getAllBrand(){
         return brandService.getAllBrand().toString();
+    }
+
+
+    @RequestMapping("/findAll")
+    public String findAll(){
+        return brandService.findAll().toString();
     }
 }

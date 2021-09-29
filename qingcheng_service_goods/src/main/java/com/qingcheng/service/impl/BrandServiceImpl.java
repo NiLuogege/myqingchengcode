@@ -18,4 +18,8 @@ public class BrandServiceImpl implements BrandService {
     public List<Brand> getAllBrand() {
         return brandMapper.getAllBrand();
     }
+
+    public List<Brand> findAll() {
+        return brandMapper.selectAll();
+    }
 }

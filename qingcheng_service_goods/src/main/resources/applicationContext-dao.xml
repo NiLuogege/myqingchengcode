@@ -56,7 +56,7 @@
     </bean>
 
     <!--  配置mapper扫描,动态实现了mapper接口可以注册到spring容器中  -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <!-- 扫描所有XxxMapper接口，将接口实例的创建交给spring容器 -->
         <property name="basePackage" value="com.qingcheng.dao"/>
