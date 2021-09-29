@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--mybatis核心配置文件-->
+    <!--给类取别名，简化输入，方便映射配置文件中使用-->
+    <typeAliases>
+        <package name="com.qingcheng"/>
+    </typeAliases>
+
+    <!-- 这里还是提供两种方式加载Mapper配置文件-->
+    <!-- 1、通过resource去加载对应的xml文件-->
+    <!-- 2、通过扫描包去加载配置文件-->
+    <!-- 需注意的是第二种方式要保证UserMapper.java与UserMapper.xml-->
+    <!-- 所在的程序【目录层级】要一致，不然扫描不到-->
+    <mappers>
+                <mapper resource="mapper/BrandMapper.xml"/>
+<!--        <package name="com.qingcheng.dao"/>-->
+    </mappers>
+
+</configuration>
