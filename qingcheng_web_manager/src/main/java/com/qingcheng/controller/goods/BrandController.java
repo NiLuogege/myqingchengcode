@@ -1,6 +1,7 @@
 package com.qingcheng.controller.goods;
 
 
+import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Brand;
 import com.qingcheng.service.goods.BrandService;
 import com.qingcheng.service.impl.BrandServiceImpl;
@@ -20,20 +21,27 @@ public class BrandController {
     BrandServiceImpl brandService;
 
 
-
     @GetMapping("/demo")
     public String demo() {
         return "hhjhhh";
     }
 
     @RequestMapping("/allBrand")
-    public List<Brand> getAllBrand(){
+    public List<Brand> getAllBrand() {
         return brandService.getAllBrand();
     }
 
 
     @RequestMapping("/findAll")
-    public List<Brand> findAll(){
+    public List<Brand> findAll() {
         return brandService.findAll();
     }
+
+
+    @GetMapping("/findPage")
+    public PageResult<Brand> findPage(int page, int size) {
+        return brandService.findPage(page,size);
+    }
+
+
 }

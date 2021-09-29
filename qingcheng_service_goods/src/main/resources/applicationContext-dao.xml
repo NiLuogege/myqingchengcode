@@ -53,6 +53,19 @@
         <property name="typeAliasesPackage" value="com.qingcheng"/>
         <!-- 扫描所有的 XxxMapper.xml映射文件，读取其中配置的SQL语句 -->
         <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <property name="properties">
+                        <value>
+                            dialect=mysql
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+
     </bean>
 
     <!--  配置mapper扫描,动态实现了mapper接口可以注册到spring容器中  -->

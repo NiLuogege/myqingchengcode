@@ -177,6 +177,13 @@
                 <version>${commons-fileupload.version}</version>
             </dependency>
 
+            <!-- 分页 -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
             <!--其他-->
             <dependency>
                 <groupId>com.alibaba</groupId>
