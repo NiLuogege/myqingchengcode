@@ -4,19 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <!--mybatis核心配置文件-->
-    <!--给类取别名，简化输入，方便映射配置文件中使用-->
-    <typeAliases>
-        <package name="com.qingcheng"/>
-    </typeAliases>
 
-    <!-- 这里还是提供两种方式加载Mapper配置文件-->
-    <!-- 1、通过resource去加载对应的xml文件-->
-    <!-- 2、通过扫描包去加载配置文件-->
-    <!-- 需注意的是第二种方式要保证UserMapper.java与UserMapper.xml-->
-    <!-- 所在的程序【目录层级】要一致，不然扫描不到-->
-    <mappers>
-                <mapper resource="mapper/BrandMapper.xml"/>
-<!--        <package name="com.qingcheng.dao"/>-->
-    </mappers>
+    <!-- 1.配置开发环境，标签内可以配置多个环境，比如develop，test等 -->
+    <!-- 1.1.配置事务管理方式：JDBC：将事务交给JDBC管理（推荐） -->
+    <!-- 1.2.配置数据源，即连接池方式:JNDI/POOLED/UNPOOLED -->
+    <!-- 2.加载Mapper配置文件,路径以斜杠间隔: xx/xx/../xx.xml -->
+
+    <!-- 以上配置, 与Spring整合后, 都由spring管理 -->
 
 </configuration>
