@@ -30,4 +30,7 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+
+	<!--开启任务调度-->
+	<task:annotation-driven></task:annotation-driven>
 </beans>

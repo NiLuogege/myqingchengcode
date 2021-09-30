@@ -127,11 +127,11 @@
                 <version>${zookeeper.version}</version>
             </dependency>
             <!--zkclient  Zookeeper的原生API进行了包装，实现了超时重连、Watcher反复注册等功能。-->
-            <!--            <dependency>-->
-            <!--                <groupId>com.github.sgroschupf</groupId>-->
-            <!--                <artifactId>zkclient</artifactId>-->
-            <!--                <version>${zkclient.version}</version>-->
-            <!--            </dependency>-->
+            <dependency>
+                <groupId>com.github.sgroschupf</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>${zkclient.version}</version>
+            </dependency>
 
             <!-- Mybatis -->
             <dependency>

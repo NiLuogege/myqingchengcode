@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>com.niluogege</groupId>
-            <artifactId>qingcheng_service_goods</artifactId>
+            <artifactId>qingcheng_interface</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

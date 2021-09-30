@@ -13,10 +13,6 @@
                 http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--  导入配置文件  -->
-    <!--引入数据库配置文件-->
-    <context:property-placeholder location="classpath:db.properties"/>
-
     <!--数据库数据源配置-->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
@@ -41,7 +37,6 @@
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 
 
-    <!-- ***************** mybatis 原始方式使用 开始 ***************** -->
     <!--整合spring和mybatis框架	将SqlSession等对象的创建交给Spring容器-->
     <!--配置mybatis 的 sqlSessionFactory-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -52,7 +47,7 @@
         <!-- 给类取别名，简化输入，方便映射配置文件中使用 -->
         <property name="typeAliasesPackage" value="com.qingcheng"/>
         <!-- 扫描所有的 XxxMapper.xml映射文件，读取其中配置的SQL语句 -->
-        <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+        <property name="mapperLocations" value="classpath:/mapper/BrandMapper.xml"/>
 
         <property name="plugins">
             <array>
@@ -74,6 +69,4 @@
         <!-- 扫描所有XxxMapper接口，将接口实例的创建交给spring容器 -->
         <property name="basePackage" value="com.qingcheng.dao"/>
     </bean>
-
-    <!-- ***************** mybatis 原始方式使用 结束 ***************** -->
 </beans>

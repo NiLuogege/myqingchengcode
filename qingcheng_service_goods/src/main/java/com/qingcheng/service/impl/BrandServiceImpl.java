@@ -1,5 +1,6 @@
 package com.qingcheng.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.qingcheng.dao.BrandMapper;
@@ -7,7 +8,6 @@ import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Brand;
 import com.qingcheng.service.goods.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
