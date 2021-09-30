@@ -3,6 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_business" />
+    <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_config" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_goods" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_web_manager" />
   </component>
