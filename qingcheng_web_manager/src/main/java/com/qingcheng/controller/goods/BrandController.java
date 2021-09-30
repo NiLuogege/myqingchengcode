@@ -3,6 +3,7 @@ package com.qingcheng.controller.goods;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.goods.Brand;
 import com.qingcheng.service.goods.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,4 +49,9 @@ public class BrandController {
     }
 
 
+    @GetMapping("findById")
+    public Result<Brand> findById(int id){
+        Brand brand =brandService.findById(id);
+        return new Result<Brand>(brand);
+    }
 }

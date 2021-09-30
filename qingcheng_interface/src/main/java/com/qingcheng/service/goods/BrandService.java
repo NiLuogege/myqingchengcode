@@ -16,4 +16,5 @@ public interface BrandService {
 
     public PageResult<Brand> findPage(Map searchMap, int page, int size);
 
+    Brand findById(int id);
 }

@@ -44,6 +44,11 @@ public class BrandServiceImpl implements BrandService {
         return new PageResult<Brand>(pageResult.getTotal(), pageResult.getResult());
     }
 
+    @Override
+    public Brand findById(int id) {
+        return brandMapper.selectByPrimaryKey(id);
+    }
+
     private Example createExample(Map searchMap) {
         Example example = new Example(Brand.class);
         Example.Criteria criteria = example.createCriteria();
