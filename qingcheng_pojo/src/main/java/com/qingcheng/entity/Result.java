@@ -23,6 +23,10 @@ public class Result<T> implements Serializable {
         this(200, data, "success");
     }
 
+    public Result() {
+        this(200, null, "success");
+    }
+
     public int getCode() {
         return code;
     }
