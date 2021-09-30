@@ -14,6 +14,10 @@ public class Result<T> implements Serializable {
         this.msg = msg;
     }
 
+    public Result(int code, String msg) {
+        this(code, null, msg);
+    }
+
 
     public Result(T data) {
         this(200, data, "success");

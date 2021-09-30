@@ -54,4 +54,12 @@ public class BrandController {
         Brand brand =brandService.findById(id);
         return new Result<Brand>(brand);
     }
+
+
+    @GetMapping("checkErrorHandle")
+    public Result<Brand> checkErrorHandle(){
+        int i = 1/0;
+        Brand brand =brandService.findById(10);
+        return new Result<Brand>(brand);
+    }
 }
