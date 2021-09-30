@@ -212,7 +212,17 @@
         </dependencies>
     </dependencyManagement>
 
-<!--    <build>-->
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+
+    <!--    <build>-->
 <!--        <plugins>-->
 <!--            &lt;!&ndash;指定Java版本&ndash;&gt;-->
 <!--            <plugin>-->
