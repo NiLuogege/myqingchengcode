@@ -18,6 +18,7 @@
         <module>qingcheng_service_config</module>
         <module>qingcheng_service_order</module>
         <module>qingcheng_service_system</module>
+        <module>qingcheng_service_user</module>
         <module>qingcheng_web_manager</module>
     </modules>
 

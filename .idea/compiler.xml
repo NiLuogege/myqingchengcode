@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="qingcheng_service_system" />
         <module name="qingcheng_common_service" />
+        <module name="qingcheng_service_user" />
         <module name="qingcheng_service_business" />
         <module name="qingcheng_service_config" />
         <module name="qingcheng_common" />
