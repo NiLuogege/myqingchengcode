@@ -9,6 +9,9 @@ ssm+dubbo 练习项目
 公共模块，用于存放工具类等
 
 ### qingcheng_service_goods
+商品服务模块 : web模块（独立发布），所以需要在web.xml中加载配置
 
-商品服务模块，使用 传统 mybatis(xml 方式开发)
-###### 注意，刚开始开发的时候用的是 spring的 @Service ，后面要融入 dubbo 就好使用 dubbo的
+
+
+# dubbo
+- 需要在服务侧注册服务，访问侧引入服务 （都需要配置dubbo） 
