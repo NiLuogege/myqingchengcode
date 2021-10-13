@@ -5,6 +5,7 @@ import com.qingcheng.entity.PageResult;
 import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.service.goods.SkuService;
+import org.apache.http.HttpHost;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -57,6 +58,20 @@ public class SkuController {
     @GetMapping("/delete")
     public Result delete(String id){
         skuService.delete(id);
+        return new Result();
+    }
+
+    @GetMapping("/putToEs")
+    public Result putToEs(){
+        //1.连接rest接口
+//        HttpHost http=new HttpHost("127.0.0.1",9200,"http");
+//        RestClientBuilder restClientBuilder = RestClient.builder(http);
+//        RestHighLevelClient restHighLevelClient=new RestHighLevelClient(restClientBuilder);
+//
+        List<Sku> skus = skuService.findAll();
+        for (Sku sku : skus) {
+
+        }
         return new Result();
     }
 
