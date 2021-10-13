@@ -34,5 +34,6 @@ ssm+dubbo 练习项目
 - spring安全组件 在 web.xml中的配置要放在 springmvc 之前要不会失效
 - springDataRadius 配置和使用
 - es 的 安装和使用
+- rabbitMQ 使用
 
   
