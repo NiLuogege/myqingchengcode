@@ -6,9 +6,13 @@ import com.qingcheng.dao.CategoryMapper;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Category;
 import com.qingcheng.service.goods.CategoryService;
+import com.qingcheng.util.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +97,39 @@ public class CategoryServiceImpl implements CategoryService {
      */
     public void delete(Integer id) {
         categoryMapper.deleteByPrimaryKey(id);
+    }
+
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Override
+    public void saveCategoryTreeToRedis() {
+        Example example = new Example(Category.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("isShow","1");
+        example.setOrderByClause("seq");
+        List<Category> categories = categoryMapper.selectByExample(example);
+        List<Map> categoryTree = findByParentId(categories, 0);
+        redisTemplate.boundValueOps(CacheKey.CATEGROY_TREE).set(categoryTree);
+    }
+
+    @Override
+    public List<Map> findCategoryTree() {
+        return (List<Map>) redisTemplate.boundValueOps(CacheKey.CATEGROY_TREE).get();
+    }
+
+    private List<Map> findByParentId(List<Category> categoryList,Integer parentId ){
+        List<Map> mapList=new ArrayList<Map>();
+        for(Category category:categoryList  ){
+            if( category.getParentId().equals(parentId) ){
+                Map map=new HashMap();
+                map.put("name",category.getName());
+                map.put("menus", findByParentId( categoryList,category.getId()  ) );
+                mapList.add(map);
+            }
+        }
+        return  mapList;
     }
 
     /**

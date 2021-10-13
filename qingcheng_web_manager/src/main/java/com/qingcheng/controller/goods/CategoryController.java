@@ -60,4 +60,9 @@ public class CategoryController {
         return new Result();
     }
 
+    @GetMapping("/getCategoryTree")
+    public Result getCategoryTree(){
+        return new Result(categoryService.findCategoryTree());
+    }
+
 }

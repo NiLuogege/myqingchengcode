@@ -32,4 +32,7 @@ public interface CategoryService {
 
     public void delete(Integer id);
 
+    public void saveCategoryTreeToRedis();
+
+    public List<Map> findCategoryTree();
 }
