@@ -66,6 +66,11 @@ public class SkuSearchServiceImpl implements SkuSearchService {
 
         //通过品牌过滤查询
         String brand = searchMap.get("brand");
+        if (!StringUtils.isEmpty(brand)){
+            TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("brandName", brand);
+            boolQueryBuilder.filter(termQueryBuilder);
+        }
+
 
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
