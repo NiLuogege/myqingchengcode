@@ -35,5 +35,6 @@ ssm+dubbo 练习项目
 - springDataRadius 配置和使用
 - es 的 安装和使用
 - rabbitMQ 使用
+- 单点登录 CAS 使用 （这个是用于没有前后端分离情况下的，可以先不看）
 
   

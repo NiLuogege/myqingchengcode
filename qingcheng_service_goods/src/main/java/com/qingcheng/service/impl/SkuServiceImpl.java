@@ -1,14 +1,24 @@
 package com.qingcheng.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.qingcheng.dao.SkuMapper;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.service.goods.SkuService;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Requests;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +27,10 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+
+    @Autowired
+    private RestHighLevelClient esRestClientFactory;
 
     /**
      * 返回全部记录
@@ -93,6 +107,61 @@ public class SkuServiceImpl implements SkuService {
      */
     public void delete(String id) {
         skuMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void putAllToEs() throws IOException {
+        List<Sku> skus = findAll();
+        for (Sku sku : skus) {
+
+            BulkRequest bulkRequest = new BulkRequest();
+            IndexRequest indexRequest = new IndexRequest("sku","doc");
+
+            Map skuMap=new HashMap();
+            skuMap.put("name",sku.getName());
+            skuMap.put("brandName",sku.getBrandName());
+            skuMap.put("categoryName",sku.getCategoryName());
+            skuMap.put("price",sku.getPrice());
+            skuMap.put("createTime",sku.getCreateTime());
+            skuMap.put("saleNum",sku.getSaleNum());
+            skuMap.put("commentNum",sku.getCommentNum());
+
+            Map spec=new HashMap();
+            String skuSpec = sku.getSpec();
+            spec.putAll(JSON.parseObject(skuSpec));
+            skuMap.put("spec",spec);
+
+            indexRequest.source(skuMap);
+            bulkRequest.add(indexRequest);
+
+            BulkResponse bulkResponse = esRestClientFactory.bulk(bulkRequest, RequestOptions.DEFAULT);
+            System.out.println("插入 sku="+sku.getName()+" status="+bulkResponse.status().getStatus());
+        }
+    }
+
+    @Override
+    public void puOneToEs() throws IOException {
+        BulkRequest bulkRequest = new BulkRequest();
+        IndexRequest indexRequest = new IndexRequest("sku","doc");
+
+        Map skuMap=new HashMap();
+        skuMap.put("name","测试华为");
+        skuMap.put("brandName","华为");
+        skuMap.put("categoryName","手机");
+        skuMap.put("price",1010221);
+        skuMap.put("createTime","2019-05-01");
+        skuMap.put("saleNum",101021);
+        skuMap.put("commentNum",10102321);
+        Map spec=new HashMap();
+        spec.put("网络制式","移动4G");
+        spec.put("屏幕尺寸","5");
+        skuMap.put("spec",spec);
+
+        indexRequest.source(skuMap);
+        bulkRequest.add(indexRequest);
+
+        BulkResponse bulkResponse = esRestClientFactory.bulk(bulkRequest, RequestOptions.DEFAULT);
+        System.out.println("插入 sku="+skuMap.get("name")+" status="+bulkResponse.status().getStatus());
     }
 
     /**

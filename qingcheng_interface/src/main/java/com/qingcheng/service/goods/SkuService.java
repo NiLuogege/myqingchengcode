@@ -2,6 +2,7 @@ package com.qingcheng.service.goods;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -31,5 +32,9 @@ public interface SkuService {
 
 
     public void delete(String id);
+
+    public void putAllToEs() throws IOException;
+
+    public void puOneToEs() throws IOException;
 
 }
