@@ -71,6 +71,25 @@ public class SkuSearchServiceImpl implements SkuSearchService {
             boolQueryBuilder.filter(termQueryBuilder);
         }
 
+        //通过价格过滤查询
+        String price = searchMap.get("price");
+        if (!StringUtils.isEmpty(price)&& price.contains("-")){
+            String[] prices = price.split("-");
+            String min = prices[0];
+            String max = prices[1];
+            if (!min.equals("0")){
+                //大于等于
+                RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("price").gte(min + "00");
+                boolQueryBuilder.filter(rangeQueryBuilder);
+            }
+
+            if (!max.equals("*")){
+                RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("price").lte(min + "00");
+                boolQueryBuilder.filter(rangeQueryBuilder);
+            }
+
+        }
+
 
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
