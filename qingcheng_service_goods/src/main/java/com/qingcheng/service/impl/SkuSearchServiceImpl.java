@@ -1,6 +1,7 @@
 package com.qingcheng.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.qingcheng.dao.BrandMapper;
 import com.qingcheng.service.goods.SkuSearchService;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -33,7 +34,10 @@ import java.util.Map;
 public class SkuSearchServiceImpl implements SkuSearchService {
 
     @Autowired
-    protected RestHighLevelClient restHighLevelClient;
+    private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private BrandMapper brandMapper;
 
     @Override
     public Map search(Map<String, String> searchMap) throws IOException {
@@ -59,6 +63,9 @@ public class SkuSearchServiceImpl implements SkuSearchService {
             TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("categoryName", category);
             boolQueryBuilder.filter(termQueryBuilder);
         }
+
+        //通过品牌过滤查询
+        String brand = searchMap.get("brand");
 
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
@@ -97,6 +104,15 @@ public class SkuSearchServiceImpl implements SkuSearchService {
         }
         resultMap.put("categoryList", categoryList);
 
+
+        //2.3 品牌列表
+        if (StringUtils.isEmpty(category) && categoryList.size()>0){
+            category=categoryList.get(0);
+        }
+        if (!StringUtils.isEmpty(category)){
+            List<Map> brandList = brandMapper.findListByCategoryName(category);
+            resultMap.put("brandList",brandList);
+        }
 
         return resultMap;
     }
