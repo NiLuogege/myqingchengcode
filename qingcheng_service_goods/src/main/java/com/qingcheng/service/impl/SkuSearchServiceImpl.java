@@ -7,10 +7,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -56,6 +53,13 @@ public class SkuSearchServiceImpl implements SkuSearchService {
             boolQueryBuilder.must(matchQueryBuilder);
         }
 
+        //通过分类过滤查询
+        String category = searchMap.get("category");
+        if (!StringUtils.isEmpty(category)){
+            TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("categoryName", category);
+            boolQueryBuilder.filter(termQueryBuilder);
+        }
+
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
 
@@ -64,6 +68,9 @@ public class SkuSearchServiceImpl implements SkuSearchService {
         TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("sku_category").field("categoryName");
         searchSourceBuilder.aggregation(termsAggregationBuilder);
 
+
+        searchSourceBuilder.from(0);//开始索引设置
+        searchSourceBuilder.size(200);//每页记录数设置
 
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
