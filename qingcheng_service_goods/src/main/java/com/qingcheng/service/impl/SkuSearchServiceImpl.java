@@ -13,6 +13,11 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -21,6 +26,7 @@ import javax.naming.directory.SearchResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,19 +59,38 @@ public class SkuSearchServiceImpl implements SkuSearchService {
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
 
+
+        //聚合查询（商品分类）目的是将所有查询出来的 categoryName 进行聚合
+        TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("sku_category").field("categoryName");
+        searchSourceBuilder.aggregation(termsAggregationBuilder);
+
+
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
         Map resultMap = new HashMap();
-        ArrayList resultList = new ArrayList<Map<String, Object>>();
 
+        //2.1 商品列表
+        ArrayList resultList = new ArrayList<Map<String, Object>>();
         SearchHits searchHits = searchResponse.getHits();
         SearchHit[] hits = searchHits.getHits();
         for (SearchHit hit : hits) {
             Map<String, Object> skuMap = hit.getSourceAsMap();
             resultList.add(skuMap);
         }
-
         resultMap.put("list", resultList);
+
+        //2.2 商品分类列表
+        Aggregations aggregations = searchResponse.getAggregations();
+        Map<String, Aggregation> aggregationMap = aggregations.getAsMap();
+        Terms terms = (Terms) aggregationMap.get("sku_category");
+        List<? extends Terms.Bucket> buckets = terms.getBuckets();
+        ArrayList<String> categoryList = new ArrayList<>();
+        for (Terms.Bucket bucket : buckets) {
+            categoryList.add(bucket.getKeyAsString());
+        }
+        resultMap.put("categoryList", categoryList);
+
+
         return resultMap;
     }
 }
