@@ -17,6 +17,7 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -91,17 +92,20 @@ public class SkuSearchServiceImpl implements SkuSearchService {
         }
 
 
-        searchSourceBuilder.query(boolQueryBuilder);
-        searchRequest.source(searchSourceBuilder);
-
 
         //聚合查询（商品分类）目的是将所有查询出来的 categoryName 进行聚合
         TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("sku_category").field("categoryName");
         searchSourceBuilder.aggregation(termsAggregationBuilder);
 
-
+        //分页
         searchSourceBuilder.from(0);//开始索引设置
         searchSourceBuilder.size(200);//每页记录数设置
+
+        //排序
+        searchSourceBuilder.sort("price", SortOrder.ASC);
+
+        searchSourceBuilder.query(boolQueryBuilder);
+        searchRequest.source(searchSourceBuilder);
 
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
