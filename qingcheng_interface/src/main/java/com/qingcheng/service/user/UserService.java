@@ -1,5 +1,6 @@
 package com.qingcheng.service.user;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.user.User;
 
 import java.util.*;
@@ -32,4 +33,18 @@ public interface UserService {
 
     public void delete(String username);
 
+
+    /**
+     * 发送短信验证码
+     * @param phone  手机号
+     * @return
+     */
+    public void sendSms(String phone);
+
+    /**
+     * 用户注册
+     * @param user 用户
+     * @param smsCode 验证码
+     */
+    public void add(User user,String smsCode);
 }

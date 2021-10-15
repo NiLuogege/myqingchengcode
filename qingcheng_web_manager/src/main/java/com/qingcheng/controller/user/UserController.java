@@ -17,47 +17,52 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/findAll")
-    public List<User> findAll(){
+    public List<User> findAll() {
         return userService.findAll();
     }
 
     @GetMapping("/findPage")
-    public PageResult<User> findPage(int page, int size){
+    public PageResult<User> findPage(int page, int size) {
         return userService.findPage(page, size);
     }
 
     @PostMapping("/findList")
-    public List<User> findList(@RequestBody Map<String,Object> searchMap){
+    public List<User> findList(@RequestBody Map<String, Object> searchMap) {
         return userService.findList(searchMap);
     }
 
     @PostMapping("/findPage")
-    public PageResult<User> findPage(@RequestBody Map<String,Object> searchMap,int page, int size){
-        return  userService.findPage(searchMap,page,size);
+    public PageResult<User> findPage(@RequestBody Map<String, Object> searchMap, int page, int size) {
+        return userService.findPage(searchMap, page, size);
     }
 
     @GetMapping("/findById")
-    public User findById(String username){
+    public User findById(String username) {
         return userService.findById(username);
     }
 
 
     @PostMapping("/add")
-    public Result add(@RequestBody User user){
+    public Result add(@RequestBody User user) {
         userService.add(user);
         return new Result();
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody User user){
+    public Result update(@RequestBody User user) {
         userService.update(user);
         return new Result();
     }
 
     @GetMapping("/delete")
-    public Result delete(String username){
+    public Result delete(String username) {
         userService.delete(username);
         return new Result();
     }
 
+    @GetMapping("/sendSms")
+    public Result sendSms(String phone) {
+        userService.sendSms(phone);
+        return new Result();
+    }
 }

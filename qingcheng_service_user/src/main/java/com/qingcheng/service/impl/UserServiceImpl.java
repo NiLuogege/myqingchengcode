@@ -1,22 +1,36 @@
 package com.qingcheng.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.qingcheng.dao.UserMapper;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.user.User;
 import com.qingcheng.service.user.UserService;
+import com.qingcheng.util.CacheKey;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 返回全部记录
@@ -93,6 +107,31 @@ public class UserServiceImpl implements UserService {
      */
     public void delete(String username) {
         userMapper.deleteByPrimaryKey(username);
+    }
+
+    @Override
+    public void sendSms(String phone) {
+        Random random = new Random();
+        int code = random.nextInt(999999);
+        if (code<100000){
+            code=code+100000;
+        }
+
+        //将验证码 加入到 redis
+        redisTemplate.boundHashOps(CacheKey.SMS).put("sms_"+phone,code);
+        redisTemplate.boundHashOps(CacheKey.SMS).expire(5, TimeUnit.MINUTES);
+
+        //给短信服务发消息
+        HashMap<String, String> map = new HashMap<>();
+        map.put("phone",phone);
+        map.put("code",code+"");
+        rabbitTemplate.convertAndSend("","queue.sms", JSON.toJSONString(map));
+
+    }
+
+    @Override
+    public void add(User user, String smsCode) {
+
     }
 
     /**

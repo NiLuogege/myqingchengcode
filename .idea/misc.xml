@@ -6,6 +6,7 @@
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_config" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_goods" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_order" />
+    <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_sms" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_system" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_user" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_web_manager" />
@@ -15,6 +16,11 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/pingcheng_service_user/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
