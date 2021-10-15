@@ -5,6 +5,7 @@ import com.qingcheng.entity.PageResult;
 import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.user.User;
 import com.qingcheng.service.user.UserService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -63,6 +64,22 @@ public class UserController {
     @GetMapping("/sendSms")
     public Result sendSms(String phone) {
         userService.sendSms(phone);
+        return new Result();
+    }
+
+
+    @GetMapping("/add")
+    public Result addUser(String phone, String password, String smsCode) {
+        //密码加密
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String newPassword = encoder.encode(password);
+
+        User user = new User();
+        user.setPhone(phone);
+        user.setUsername(phone);
+        user.setPassword(password);
+
+        userService.add(user, smsCode);
         return new Result();
     }
 }
