@@ -1,6 +1,7 @@
 package com.qingcheng.service.goods;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
+import com.qingcheng.pojo.order.OrderItem;
 
 import java.io.IOException;
 import java.util.*;
@@ -37,4 +38,5 @@ public interface SkuService {
 
     public void puOneToEs() throws IOException;
 
+    boolean deductionStock(List<OrderItem> orderItemList);
 }

@@ -194,4 +194,33 @@ public class CartServiceImpl implements CartService {
         }
         return allPreMoney;
     }
+
+    /**
+     * 更新购物车缓存数据
+     * @param username
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> findNewOrderItemList(String username) {
+        List<Map<String, Object>> cartList = findCartList(username);
+        for (Map<String, Object> cartItem : cartList) {
+            OrderItem orderItem = (OrderItem) cartItem.get("item");
+            Sku sku = skuService.findById(orderItem.getSkuId());
+            orderItem.setPrice(sku.getPrice());
+            orderItem.setMoney(sku.getPrice()*orderItem.getNum());
+        }
+
+        redisTemplate.boundHashOps(CacheKey.CARD_LIST).put(username,cartList);
+
+        return cartList;
+    }
+
+    @Override
+    public void deleteCheckedCart(String username) {
+        //获得未选中的购物车
+        List<Map<String, Object>> cartList = findCartList(username).stream().filter(cart -> (boolean) cart.get("checked") == false)
+                .collect(Collectors.toList());
+        redisTemplate.boundHashOps(CacheKey.CARD_LIST).put(username,cartList);
+    }
+
 }

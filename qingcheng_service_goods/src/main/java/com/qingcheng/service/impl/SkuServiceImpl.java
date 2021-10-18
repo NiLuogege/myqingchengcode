@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.qingcheng.dao.SkuMapper;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
+import com.qingcheng.pojo.order.OrderItem;
 import com.qingcheng.service.goods.SkuService;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -15,6 +16,7 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
@@ -22,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Service(interfaceClass = SkuService.class)
 public class SkuServiceImpl implements SkuService {
 
     @Autowired
@@ -162,6 +164,44 @@ public class SkuServiceImpl implements SkuService {
 
         BulkResponse bulkResponse = esRestClientFactory.bulk(bulkRequest, RequestOptions.DEFAULT);
         System.out.println("插入 sku="+skuMap.get("name")+" status="+bulkResponse.status().getStatus());
+    }
+
+    /**
+     * 扣减库存 ，因为有循环插入而且 是 扣减库存+增加销量 两个步骤 所以需要加上 事务
+     * @param orderItemList
+     * @return
+     */
+    @Transactional
+    @Override
+    public boolean deductionStock(List<OrderItem> orderItemList) {
+
+        boolean canDeduction =true;//是否可以扣减
+        for (OrderItem orderItem : orderItemList) {//异常校验，只要有一个 有问题都不进行库存扣减
+            Sku sku = findById(orderItem.getSkuId());
+            if (sku==null){
+                canDeduction=false;
+                break;
+            }
+
+            if (!"1".equals(sku.getStatus())){
+                canDeduction=false;
+                break;
+            }
+
+            if (sku.getNum()<orderItem.getNum()){
+                canDeduction=false;
+                break;
+            }
+        }
+
+        if (canDeduction){
+            for (OrderItem orderItem : orderItemList) {
+                skuMapper.deductionStock(orderItem.getSkuId(),orderItem.getNum());
+                skuMapper.addSaleNum(orderItem.getSkuId(),orderItem.getNum());
+            }
+        }
+
+        return canDeduction;
     }
 
     /**

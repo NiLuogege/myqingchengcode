@@ -36,4 +36,17 @@ public interface CartService {
      * @return
      */
     int preferential(String username) ;
+
+    /**
+     * 更新购物车缓存数据
+     * @param username
+     * @return
+     */
+    List<Map<String, Object>> findNewOrderItemList(String username);
+
+    /**
+     * 删除选中的购物车
+     * @param username
+     */
+    public void deleteCheckedCart(String username);
 }
