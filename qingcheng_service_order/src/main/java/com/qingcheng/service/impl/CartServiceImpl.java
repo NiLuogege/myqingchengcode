@@ -36,7 +36,7 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     public List<Map<String, Object>> findCartList(String username) {
-        System.out.println("findCartList username="+username);
+        System.out.println("findCartList username=" + username);
 
         List<Map<String, Object>> result = (List<Map<String, Object>>) redisTemplate.boundHashOps(CacheKey.CARD_LIST).get(username);
         if (result == null) {
@@ -63,7 +63,7 @@ public class CartServiceImpl implements CartService {
         }
 
 
-        System.out.println("username="+username+" addItem="+cacheList.toString());
+        System.out.println("username=" + username + " addItem=" + cacheList.toString());
 
         for (Map<String, Object> cardItem : cacheList) {
             OrderItem orderItem = (OrderItem) cardItem.get("item");
@@ -98,7 +98,6 @@ public class CartServiceImpl implements CartService {
                 throw new RuntimeException("商品数量不合法");
             }
 
-            List<Map<String, Object>> items = new ArrayList<>();
             Map<String, Object> item = new HashMap();
             OrderItem orderItem = new OrderItem();
             orderItem.setSkuId(skuId);
@@ -117,26 +116,52 @@ public class CartServiceImpl implements CartService {
             //设置三级分类
             orderItem.setCategoryId3(sku.getCategoryId());
             Category category3 = (Category) redisTemplate.boundHashOps(CacheKey.CATEGROY).get(sku.getCategoryId());
-            if (category3==null){
-                category3= categoryService.findById(sku.getCategoryId());
-                redisTemplate.boundHashOps(CacheKey.CATEGROY).put(sku.getCategoryId(),category3);
+            if (category3 == null) {
+                category3 = categoryService.findById(sku.getCategoryId());
+                redisTemplate.boundHashOps(CacheKey.CATEGROY).put(sku.getCategoryId(), category3);
             }
 
             //设置二级分类
             orderItem.setCategoryId2(category3.getParentId());
             Category category2 = (Category) redisTemplate.boundHashOps(CacheKey.CATEGROY).get(category3.getParentId());
-            if (category2==null){
-                category2= categoryService.findById(category3.getParentId());
-                redisTemplate.boundHashOps(CacheKey.CATEGROY).put(sku.getCategoryId(),category2);
+            if (category2 == null) {
+                category2 = categoryService.findById(category3.getParentId());
+                redisTemplate.boundHashOps(CacheKey.CATEGROY).put(sku.getCategoryId(), category2);
             }
 
             //设置一级分类
             orderItem.setCategoryId1(category2.getParentId());
 
             item.put("item", orderItem);
-            items.add(item);
+            item.put("checked", true);//默认选中
+            cacheList.add(item);
 
-            redisTemplate.boundHashOps(CacheKey.CARD_LIST).put(username, items);
         }
+        redisTemplate.boundHashOps(CacheKey.CARD_LIST).put(username, cacheList);
+    }
+
+
+    @Override
+    public boolean updateCheck(String username, String skuId, boolean check) {
+
+        boolean isOk = false;
+        List<Map<String, Object>> cacheList = (List<Map<String, Object>>) redisTemplate.boundHashOps(CacheKey.CARD_LIST).get(username);
+        if (cacheList == null) {
+            cacheList = new ArrayList<>();
+        }
+        for (Map<String, Object> cardItem : cacheList) {
+            OrderItem orderItem = (OrderItem) cardItem.get("item");
+            if (orderItem.getSkuId().equals(skuId)) {//已经存在，对已有的数据进行修改
+                cardItem.put("checked", check);
+                isOk = true;
+                break;
+            }
+        }
+
+        if (isOk) {
+            redisTemplate.boundHashOps(CacheKey.CARD_LIST).put(username, cacheList);
+        }
+
+        return isOk;
     }
 }

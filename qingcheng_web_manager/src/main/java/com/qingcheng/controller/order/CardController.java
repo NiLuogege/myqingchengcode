@@ -33,4 +33,11 @@ public class CardController {
         cartService.addItem(username, skuId, num);
         return new Result();
     }
+
+    @GetMapping("updateChecked")
+    public Result updateChecked(String skuId, boolean check) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        cartService.updateCheck(username, skuId, check);
+        return new Result();
+    }
 }

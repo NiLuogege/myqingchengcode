@@ -20,4 +20,13 @@ public interface CartService {
      */
     void  addItem (String username , String skuId,int num);
 
+    /**
+     * 修改 选中
+     * @param username
+     * @param skuId
+     * @param check
+     * @return
+     */
+    boolean updateCheck (String username , String skuId, boolean check);
+
 }
