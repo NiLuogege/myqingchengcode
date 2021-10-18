@@ -40,4 +40,11 @@ public class CardController {
         cartService.updateCheck(username, skuId, check);
         return new Result();
     }
+
+    @GetMapping("preferential")
+    public Result preferential() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        int preMoney = cartService.preferential(username);
+        return new Result(preMoney);
+    }
 }

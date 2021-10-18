@@ -29,4 +29,11 @@ public interface CartService {
      */
     boolean updateCheck (String username , String skuId, boolean check);
 
+
+    /**
+     * 计算优惠
+     * @param username
+     * @return
+     */
+    int preferential(String username) ;
 }

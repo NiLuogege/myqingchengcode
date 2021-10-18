@@ -8,14 +8,13 @@ import com.qingcheng.pojo.order.OrderItem;
 import com.qingcheng.service.goods.CategoryService;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.service.order.CartService;
+import com.qingcheng.service.order.PreferentialService;
 import com.qingcheng.util.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -27,6 +26,9 @@ public class CartServiceImpl implements CartService {
     private SkuService skuService;
     @Reference
     private CategoryService categoryService;
+
+    @Autowired
+    private PreferentialService preferentialService;
 
     /**
      * 从缓存中 获取购物车信息，因为 缓存的速度快，购物车操作频繁且快速
@@ -111,6 +113,7 @@ public class CartServiceImpl implements CartService {
             } else {
                 orderItem.setWeight(sku.getWeight() * num);
             }
+            orderItem.setMoney(orderItem.getPrice() * num);//金额计算
 
 
             //设置三级分类
@@ -163,5 +166,32 @@ public class CartServiceImpl implements CartService {
         }
 
         return isOk;
+    }
+
+    @Override
+    public int preferential(String username) {
+        List<Map<String, Object>> cacheList = (List<Map<String, Object>>) redisTemplate.boundHashOps(CacheKey.CARD_LIST).get(username);
+        //已选中的 list
+        List<OrderItem> orderItemList = cacheList.stream().filter(cart -> (boolean) cart.get("checked") == true)
+                .map(cart -> (OrderItem) cart.get("item"))
+                .collect(Collectors.toList());
+
+        //按分类 统计每个分类的 金额
+        Map<Integer, IntSummaryStatistics> summaryStatisticsMap =
+                orderItemList
+                        .stream()
+                        .collect(Collectors.groupingBy(OrderItem::getCategoryId3, Collectors.summarizingInt(OrderItem::getMoney)));
+
+        int allPreMoney = 0;//累计优惠金额
+
+        for (Integer categoryId : summaryStatisticsMap.keySet()) {
+            //当前分类总金额
+            Long money = summaryStatisticsMap.get(categoryId).getSum();
+            int preMoney = preferentialService.findPreMoneyByCategoryId(categoryId, money.intValue());
+
+            System.out.println("categoryId= " + categoryId + " money=" + money + " preMoney=" + preMoney);
+            allPreMoney += preMoney;
+        }
+        return allPreMoney;
     }
 }
