@@ -3,7 +3,9 @@ package com.qingcheng.controller.order;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.qingcheng.entity.Result;
+import com.qingcheng.pojo.order.Order;
 import com.qingcheng.service.order.CartService;
+import com.qingcheng.service.order.OrderService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,9 @@ public class CardController {
 
     @Reference
     private CartService cartService;
+
+    @Reference
+    private OrderService orderService;
 
     @GetMapping("findCartList")
     public Result findCartList() {
@@ -46,5 +51,13 @@ public class CardController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         int preMoney = cartService.preferential(username);
         return new Result(preMoney);
+    }
+
+    @GetMapping("saveOrder")
+    public Result saveOrder(Order order){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        order.setUsername(username);
+        orderService.add(order);
+        return new Result();
     }
 }
