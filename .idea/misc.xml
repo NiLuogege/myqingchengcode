@@ -10,6 +10,7 @@
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_system" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_service_user" />
     <file type="web" url="file://$PROJECT_DIR$/qingcheng_web_manager" />
+    <type id="Spring" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

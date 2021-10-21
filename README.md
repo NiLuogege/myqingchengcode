@@ -41,6 +41,7 @@ ssm+dubbo 练习项目
 - echosite 内网映射工具的配置和使用（感觉可以先不用看）
 - rabbitMp + webSocket 的使用
 - rabbitMq 延时队列
+- redis 可视化工具
 
 
 

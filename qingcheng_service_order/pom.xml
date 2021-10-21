@@ -29,6 +29,12 @@
             <version>2.1.4.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>red.htt</groupId>
+            <artifactId>wxpay-sdk</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+
     </dependencies>
 
     <build>
