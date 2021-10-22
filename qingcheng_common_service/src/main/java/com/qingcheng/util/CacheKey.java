@@ -7,6 +7,7 @@ public enum CacheKey {
     SKU_PRICE,//价格
     CATEGROY_TREE,//分类-树
     CATEGROY,//分类
+    SECKILL_GOODS,//分类
     SMS;//短信
 
 }
