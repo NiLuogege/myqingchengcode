@@ -11,8 +11,8 @@
 
 	<!--雪花分布式id生成-->
 	<bean id="idWorker" class="com.qingcheng.util.IdWorker">
-		<constructor-arg index="0" value="1"></constructor-arg>
-		<constructor-arg index="1" value="1"></constructor-arg>
+		<constructor-arg index="0" value="3"></constructor-arg>
+		<constructor-arg index="1" value="3"></constructor-arg>
 	</bean>
 
 
