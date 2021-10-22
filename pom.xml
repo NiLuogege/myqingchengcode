@@ -21,6 +21,7 @@
         <module>qingcheng_service_user</module>
         <module>qingcheng_web_manager</module>
         <module>qingcheng_service_sms</module>
+        <module>qingcheng_service_seckill</module>
     </modules>
 
     <!--打包为pom-->
