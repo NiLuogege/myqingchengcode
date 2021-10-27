@@ -15,6 +15,6 @@ public interface SeckillOrderService {
      * @param username:用户名
      * @return
      */
-    Boolean add(Long id,String time,String username);
+    Boolean add(Long id,String time,String username) throws InterruptedException;
 
 }

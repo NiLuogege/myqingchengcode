@@ -1,9 +1,11 @@
 package com.qingcheng.service;
 
 import com.qingcheng.dao.SeckillGoodsMapper;
+import com.qingcheng.pojo.order.SeckillStatus;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.pojo.seckill.SeckillOrder;
 import com.qingcheng.service.seckill.SeckillOrderService;
+import com.qingcheng.task.MultiThreadingCreateOrder;
 import com.qingcheng.util.CacheKeyString;
 import com.qingcheng.util.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
     @Autowired
     SeckillGoodsMapper seckillGoodsMapper;
 
+    @Autowired
+    MultiThreadingCreateOrder multiThreadingCreateOrder;
+
     /**
      * 创建 秒杀订单
      *
@@ -31,40 +36,31 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
      * @return
      */
     @Override
-    public Boolean add(Long id, String time, String username) {
+    public Boolean add(Long id, String time, String username) throws InterruptedException {
 
-        //从缓存中取出对应秒杀商品
-        SeckillGoods seckillGoods = (SeckillGoods) redisTemplate.boundHashOps(CacheKeyString.seckill_goods + time).get(id);
-
-        if (seckillGoods == null) {
-            throw new RuntimeException("商品异常");
+        //对用户下秒杀单次数 + 1 ，如果大于1 说明之前已经抢过了，不能再次参加
+        Long userQueueCount = redisTemplate.boundHashOps("UserQueueStatus").increment(username, 1);
+        if (userQueueCount>1){
+            throw new RuntimeException("重复抢单");
         }
 
-        if (seckillGoods.getStockCount() <= 0) {
-            throw new RuntimeException("没有库存了");
+        //该缓存队列的 大小和 商品库存大小 是一致的
+        Long size = redisTemplate.boundListOps("SeckillGoodsCountList_" + id).size();
+        if (size<=0){
+            throw new RuntimeException("售罄");
         }
 
 
-        //创建订单并保存到缓存中
-        SeckillOrder seckillOrder = new SeckillOrder();
-        seckillOrder.setId(idWorker.nextId());
-        seckillOrder.setSeckillId(id);
-        seckillOrder.setMoney(seckillGoods.getCostPrice());
-        seckillOrder.setUserId(username);
-        seckillOrder.setSellerId(seckillGoods.getSellerId());
-        seckillOrder.setCreateTime(new Date());
-        seckillOrder.setStatus("0");
-        redisTemplate.boundHashOps("SeckillOrder").put(username, seckillOrder);
+        //创建秒杀队列 item 并入队
+        SeckillStatus seckillStatus = new SeckillStatus(username,new Date(),1,id,time);
+        redisTemplate.boundListOps("SeckillOrderQueue").leftPush(seckillStatus);
 
-        //削减库存 并更新数据
-        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        if (seckillGoods.getStockCount() == 0) {//没有库存了，删除缓存数据，并同步到数据库
-            redisTemplate.boundHashOps(CacheKeyString.seckill_goods + time).delete(id);
-            seckillGoodsMapper.updateByPrimaryKeySelective(seckillGoods);
-        } else {//更新数据
-            redisTemplate.boundHashOps(CacheKeyString.seckill_goods + time).put(id, seckillGoods);
-        }
+        //缓存用户对应的秒杀信息
+        redisTemplate.boundHashOps("UserQueueStatus").put(username,seckillStatus);
 
+
+        //开始异步创建订单
+        multiThreadingCreateOrder.createOrder();
         return true;
     }
 }
