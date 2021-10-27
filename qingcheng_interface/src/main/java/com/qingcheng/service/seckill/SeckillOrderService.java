@@ -17,4 +17,12 @@ public interface SeckillOrderService {
      */
     Boolean add(Long id,String time,String username) throws InterruptedException;
 
+
+    /***
+     * 修改订单
+     * @param outtradeno
+     * @param username
+     * @param transactionid
+     */
+    void updateStatus(String outtradeno,String username,String transactionid);
 }
